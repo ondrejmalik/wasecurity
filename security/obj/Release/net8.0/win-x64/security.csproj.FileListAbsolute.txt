@@ -354,3 +354,4 @@ C:\Users\om777\Downloads\security\security\security\obj\Release\net8.0\win-x64\r
 C:\Users\om777\Downloads\security\security\security\obj\Release\net8.0\win-x64\security.pdb
 C:\Users\om777\Downloads\security\security\security\obj\Release\net8.0\win-x64\security.genruntimeconfig.cache
 C:\Users\om777\Downloads\security\security\security\obj\Release\net8.0\win-x64\ref\security.dll
+C:\Users\om777\Downloads\security\security\security\obj\Release\net8.0\win-x64\security.sourcelink.json

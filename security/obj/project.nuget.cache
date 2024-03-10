@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "G0YpCjOY+4rRUzJWeRdkN99+anph6sFhD9e/ZUyVshFonGNc3yBQNqjFyw6RYWr7GsJVq0yYJOJcYAbpz3E4VA==",
+  "dgSpecHash": "yvsIbAGnIyfh3tMdJ80Nx7Ep0aV2MeKFgl1FaCPh7vvzU071+k3At0UhUIWAl7aB1Xn9bUl8ixlw9qII598uMA==",
   "success": true,
   "projectFilePath": "C:\\Users\\om777\\Downloads\\security\\security\\security\\security.csproj",
   "expectedPackageFiles": [
@@ -11,8 +11,7 @@
     "C:\\Users\\om777\\.nuget\\packages\\mysqlconnector\\2.3.5\\mysqlconnector.2.3.5.nupkg.sha512",
     "C:\\Users\\om777\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.2\\microsoft.netcore.app.runtime.win-x64.8.0.2.nupkg.sha512",
     "C:\\Users\\om777\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.2\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.2.nupkg.sha512",
-    "C:\\Users\\om777\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.2\\microsoft.aspnetcore.app.runtime.win-x64.8.0.2.nupkg.sha512",
-    "C:\\Users\\om777\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\8.0.2\\microsoft.netcore.app.crossgen2.win-x64.8.0.2.nupkg.sha512"
+    "C:\\Users\\om777\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.2\\microsoft.aspnetcore.app.runtime.win-x64.8.0.2.nupkg.sha512"
   ],
   "logs": [
     {
