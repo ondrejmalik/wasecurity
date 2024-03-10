@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "f4EqMS5YFBzUGeRTF6vqCyqAWLLCS1WnMaDbMptlGbs=",
+  "Source": "security",
+  "BasePath": "_content/security",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "security\\wwwroot",
+      "Source": "security",
+      "ContentRoot": "C:\\Users\\om777\\Downloads\\security\\security\\security\\wwwroot\\",
+      "BasePath": "_content/security",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\om777\\Downloads\\security\\security\\security\\wwwroot\\css\\site.css",
+      "SourceId": "security",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\om777\\Downloads\\security\\security\\security\\wwwroot\\",
+      "BasePath": "_content/security",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\site.css"
+    }
+  ]
+}

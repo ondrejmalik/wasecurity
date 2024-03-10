@@ -1,0 +1,86 @@
+﻿@using MySqlConnector
+<h3>AdminPanel</h3>
+@{
+    usernameList.Clear();
+    ListUsers();
+}
+@foreach (var user in usernameList)
+{
+    <div class="user-bubble" id="display-room">
+        <h2 class="message-text">@user.Name</h2>
+        @if (!string.IsNullOrEmpty(user.ProfilePicture))
+        {
+            <img class="pfp" src="@($"data:image/png;base64,{user.ProfilePicture}")" alt="Profile Picture"/>
+        }
+        <button @onclick="@(e => deleteUser(user.Name))">X</button>
+        <br/>
+    </div>
+}
+<style>
+    .message-bubble {
+    background-color: #e6e6e6;
+    border-radius: 10px;
+    margin: 10px;
+    display: inline-block;
+    word-wrap: break-word;
+    }
+    .pfp
+    {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 2px solid #20202a;
+    }
+    .message-bubble {
+    padding: 10px;
+    margin: 10px;
+    }
+</style>
+
+@code {
+    HashSet<ListedUser> usernameList = new();
+
+    private void ListUsers()
+    {
+        using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+        {
+            connection.Open();
+            MySqlCommand command = new MySqlCommand("select u.name, u.profile_picture from user u", connection);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                int i = 0;
+
+                while (reader.Read())
+                {
+                    var Name = reader["name"].ToString();
+                    var ProfilePicture = Convert.IsDBNull(reader["profile_picture"]) ? "" : Convert.ToBase64String((byte[])reader["profile_picture"]);
+
+                    usernameList.Add(new ListedUser
+                    {
+                        Name = Name,
+                        ProfilePicture = ProfilePicture,
+                    });
+                    i++;
+                }
+            }
+
+            connection.Close();
+        }
+    }
+
+    private void deleteUser(string name)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+        {
+            connection.Open();
+            int _id = 0;
+            MySqlCommand command = new ("DELETE FROM user WHERE name = @name", connection);
+            command.Parameters.AddWithValue("@name", name);
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+    }
+
+
+}

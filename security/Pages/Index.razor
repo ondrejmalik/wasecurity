@@ -1,0 +1,299 @@
+﻿@page "/"
+@using MySqlConnector;
+@using BCrypt.Net
+@using Microsoft.AspNetCore.Components.Forms
+@inject NavigationManager NavigationManager
+@inject ParameterService Parameter
+<hr/>
+<h1>Users</h1>
+@{
+    usernameList.Clear();
+    ListUsers();
+}
+@foreach (var user in usernameList)
+{
+    <div class="user-bubble" id="display-room">
+        <hr/>
+        <h2 class="message-text">@user.Name</h2>
+        @if (!string.IsNullOrEmpty(user.ProfilePicture))
+        {
+            <img class="pfp" src="@($"data:image/png;base64,{user.ProfilePicture}")" alt="Profile Picture"/>
+        }
+        <br/>
+        @if (user.Messages != null)
+        {
+            foreach (var message in user.Messages)
+            {
+                if (message.isvisible || user.Name == Parameter.Parameter.Username)
+                {
+                    <div class="message-bubble">
+                        <p>@message.message</p>
+                        <button @onclick="@(e => deleteMessage(message.id))">X</button>
+                    </div>
+                }
+            }
+        }
+    </div>
+}
+<hr/>
+<h1>Login/Register/Change Password</h1>
+<label for="name">name:</label>
+<br>
+<input type="text" id="name" @bind="name">
+<br>
+<label for="pass">password:</label>
+<br>
+<input type="text" id="pass" @bind="password"/>
+<br>
+<label for="npass">new password:</label>
+<br>
+<input type="text" id="npass" @bind="newPassword"/>
+<br>
+<button type="submit" value="Submit" @onclick="@(e => Login())">Login </button>
+<button type="submit" value="Submit" @onclick="Register">Register </button>
+<button type="submit" value="Submit" @onclick="@(e => Login(true))">Change Password </button>
+<button type="submit" value="Submit" @onclick="@(e => Logout())">Logoout </button>
+<InputFile OnChange="HandleFileChange"/>
+@if (!string.IsNullOrEmpty(imagePngDataURL))
+{
+    <img src="@($"data:image/png;base64,{imagePngDataURL}")" alt="Profile Picture"/>
+}
+
+<style>
+    .message-bubble {
+        background-color: #e6e6e6;
+        border-radius: 10px;
+        margin: 10px;
+        display: inline-block;
+        word-wrap: break-word;
+    }
+    .pfp
+    {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 2px solid #20202a;
+    }
+    .message-bubble {
+        padding: 10px;
+        margin: 10px;
+    }
+</style>
+
+@code
+{
+
+    Credentials Credentials = new();
+    public MySqlConnection Connection { get; set; }
+    public IBrowserFile file;
+    private string name;
+    private string password;
+    private string newPassword;
+    public string FileContents { get; set; } = string.Empty;
+    HashSet<ListedUser> usernameList = new();
+    private string imagePngDataURL;
+    private byte[] imagePngData;
+
+    #region Login
+
+    private void Login(bool changePassword = false)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+        {
+            connection.Open();
+            MySqlCommand command = new MySqlCommand("SELECT * FROM user WHERE name = @name", connection);
+            command.Parameters.AddWithValue("@name", name);
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                int i = 0;
+                while (reader.Read())
+                {
+                    Credentials.Id = reader["id"].ToString();
+                    Credentials.Username = reader["name"].ToString();
+                    Credentials.Password = reader["password"].ToString();
+                    Credentials.Password = reader["password"].ToString();
+                    i++;
+                }
+            }
+
+            if (changePassword)
+            {
+                ChangePassword();
+            }
+            else
+            {
+                passwordCheck(Credentials.Password);
+            }
+
+            connection.Close();
+        }
+    }
+    private void Logout()
+    {
+        Parameter.Parameter = new();
+        NavigationManager.NavigateTo("/");
+    }
+    private void Register()
+    {
+        try
+        {
+            using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+            {
+                connection.Open();
+                string query = "INSERT INTO user (name, password, profile_picture) VALUES (@name, @password, @profile_picture)";
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@password", BCrypt.HashPassword(password));
+                command.Parameters.AddWithValue("@profile_picture", imagePngData);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
+    private void ListUsers()
+    {
+        using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+        {
+            Dictionary<string, List<(int id, string message, bool isvisible)>> d = new();
+            connection.Open();
+            MySqlCommand command = new MySqlCommand("select u.name, u.profile_picture, o.id, o.message, o.is_visible from user as u left join objednavka o on u.id = o.user_id;", connection);
+
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                int i = 0;
+
+                while (reader.Read())
+                {
+                    var Name = reader["name"].ToString();
+                    var ProfilePicture = Convert.IsDBNull(reader["profile_picture"]) ? "" : Convert.ToBase64String((byte[])reader["profile_picture"]);
+                    (int id, string message, bool? isvisible) Message = (
+                        Convert.IsDBNull(reader["id"]) ? 0 : (int)reader["id"],
+                        reader["message"].ToString(),
+                        Convert.IsDBNull(reader["is_visible"]) ? false : (reader["is_visible"].ToString() == "1")
+                    );
+                    if (Message.message == "")
+                    {
+                    }
+                    else
+                    {
+                        if (d.ContainsKey(Name))
+                        {
+                            d[Name].Add(((int, string, bool))Message);
+                        }
+                        else
+                        {
+                            d.Add(Name, new List<(int, string, bool)> { ((int, string, bool))Message });
+                        }
+                    }
+
+                    usernameList.Add(new ListedUser
+                    {
+                        Name = Name,
+                        ProfilePicture = ProfilePicture,
+                    });
+                    i++;
+                }
+            }
+
+            for (int i = 0; i < usernameList.Count; i++)
+            {
+                if (d.ContainsKey(usernameList.ElementAt(i).Name))
+                {
+                    usernameList.ElementAt(i).Messages = d[usernameList.ElementAt(i).Name];
+                }
+            }
+
+            connection.Close();
+        }
+    }
+
+    private void deleteMessage(int id)
+    {
+        using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+        {
+            connection.Open();
+            int _id = 0;
+            MySqlCommand command = new MySqlCommand("SELECT id FROM user WHERE id = (SELECT user_id from objednavka where id = @id)", connection);
+            command.Parameters.AddWithValue("@id", id);
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                int i = 0;
+                while (reader.Read())
+                {
+                    _id = (int)reader["id"];
+                    i++;
+                }
+            }
+
+            if (_id == int.Parse(Parameter.Parameter.Id) || Parameter.Parameter.Username == "admin")
+            {
+                command = new MySqlCommand("DELETE FROM objednavka WHERE id = @id", connection);
+                command.Parameters.AddWithValue("@id", id);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+    }
+
+    private void ChangePassword()
+    {
+        try
+        {
+            using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+            {
+                connection.Open();
+                string query = "UPDATE user SET password = @password WHERE name = @name";
+                MySqlCommand command = new MySqlCommand(query, connection);
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@password", BCrypt.HashPassword(newPassword));
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
+
+    private void passwordCheck(string passwordHash)
+    {
+        Parameter.Parameter = Credentials;
+        if (BCrypt.Verify(password, passwordHash))
+        {
+            NavigationManager.NavigateTo($"objednavky");
+        }
+    }
+
+    #endregion
+
+    public async Task HandleFileChange(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        await UploadFile();
+    }
+
+    public async Task UploadFile()
+    {
+        if (file != null)
+        {
+            using (var stream = file.OpenReadStream())
+            {
+                var buffer = new byte[file.Size];
+                await stream.ReadAsync(buffer);
+                imagePngData = buffer;
+            }
+
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Close()
+    {
+        Connection.Close();
+    }
+}

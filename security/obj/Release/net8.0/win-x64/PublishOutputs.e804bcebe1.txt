@@ -1,0 +1,5 @@
+C:\Users\om777\Downloads\security\security\security\bin\Release\net8.0\win-x64\publish\appsettings.Development.json
+C:\Users\om777\Downloads\security\security\security\bin\Release\net8.0\win-x64\publish\appsettings.json
+C:\Users\om777\Downloads\security\security\security\bin\Release\net8.0\win-x64\publish\security.pdb
+C:\Users\om777\Downloads\security\security\security\bin\Release\net8.0\win-x64\publish\aspnetcorev2_inprocess.dll
+C:\Users\om777\Downloads\security\security\security\bin\Release\net8.0\win-x64\publish\security.exe

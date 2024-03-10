@@ -1,0 +1,78 @@
+﻿@page "/Objednavky"
+@using Microsoft.AspNetCore.Authorization
+@using MySqlConnector;
+@inject NavigationManager NavigationManager
+@inject ParameterService Parameter
+
+@{
+    if (Parameter.Parameter == null)
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<hr/>
+<h1>Objednavky</h1>
+<label for="message">message:</label>
+<br>
+<input type="text" id="message" @bind="message">
+<br>
+<label for="isVisible">isVisible:</label>
+<br>
+<input type="checkbox" id="isVisible" @bind="isVisible"/>
+<br>
+<button type="submit" value="Submit" @onclick="@(e => CreateObjednavka())">Create </button>
+@if (Parameter.Parameter.Username.ToLower() == "admin")
+{
+    <AdminPanel/>
+}
+
+<style>
+    .message-bubble {
+        background-color: #e6e6e6;
+        border-radius: 10px;
+        margin: 10px;
+        display: inline-block;
+        word-wrap: break-word;
+    }
+</style>
+
+@code
+{
+    [Parameter] public int userId { get; set; }
+
+    public MySqlConnection Connection { get; set; }
+    private string message;
+    private bool isVisible;
+
+
+    private void CreateObjednavka()
+    {
+        if (Parameter.Parameter.Id != null)
+        {
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Config.ConnectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO objednavka(message, is_visible, user_id) VALUES (@message, @is_visible, @user_id)";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@message", message);
+                    command.Parameters.AddWithValue("@is_visible", isVisible);
+                    command.Parameters.AddWithValue("@user_id", Parameter.Parameter.Id);
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+    }
+
+
+    public void Close()
+    {
+        Connection.Close();
+    }
+}
