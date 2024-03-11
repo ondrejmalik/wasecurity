@@ -1,7 +1,11 @@
 Pro spuštění je třeba nakonfigurovat v appdata/wasecurity/config.txt connection string
+
 Pro přidání pfp musíte vložit png soubor tlačítkem dole v indexu 
+
 Pro změnu hesla musíte vyplnit username, heslo, noveheslo.
+
 Pro smazani prispevku zmacknete X u postu.
+
 Pro smazani uzivatele se prihlaste jako admin a v admin panelu ho pomoci X smazte
 
 ## XSS
