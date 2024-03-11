@@ -1,3 +1,4 @@
+## HOW TO USE
 Pro spuštění je třeba nakonfigurovat v appdata/wasecurity/config.txt connection string
 
 Pro přidání pfp musíte vložit png soubor tlačítkem dole v indexu 
