@@ -12,6 +12,10 @@ Další variace taky javascript netriggernou -
 ```
 ## XSRF
 - aplikace je řešená přes websockety veškeré akce jsou tedy session based takže nelze.
+Tohle se stát nemůže:
+```
+http://bank.com/transfer.do?acct=MARIA&amount=100000
+```
 ## SQLInjection
 - Řešeno přes SQLCommand Parametry
 ```
@@ -44,4 +48,7 @@ Chyba je v této části kódu která hází error
 }
 ```
 ## DOS
-- je samozřejmě možný řešení - cloudflare nebo jiný protection
+- je samozřejmě možný
+- řešení - cloudflare nebo jiný protection
+
+--  Malík, Ráček, Shiska
